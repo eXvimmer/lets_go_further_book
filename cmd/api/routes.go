@@ -7,13 +7,14 @@ import (
 )
 
 func (app *application) routes() *httprouter.Router {
-	router := httprouter.New()
-	router.NotFound = http.HandlerFunc(app.notFoundResponse)
-	router.MethodNotAllowed = http.HandlerFunc(app.methodNotAllowedResponse)
+	r := httprouter.New()
+	r.NotFound = http.HandlerFunc(app.notFoundResponse)
+	r.MethodNotAllowed = http.HandlerFunc(app.methodNotAllowedResponse)
 
-	router.HandlerFunc(http.MethodGet, "/v1/healthcheck", app.healthcheckHandler)
-	router.HandlerFunc(http.MethodPost, "/v1/movies", app.createMovieHandler)
-	router.HandlerFunc(http.MethodGet, "/v1/movies/:id", app.showMovieHandler)
+	r.HandlerFunc(http.MethodGet, "/v1/healthcheck", app.healthcheckHandler)
+	r.HandlerFunc(http.MethodPost, "/v1/movies", app.createMovieHandler)
+	r.HandlerFunc(http.MethodGet, "/v1/movies/:id", app.showMovieHandler)
+	r.HandlerFunc(http.MethodPut, "/v1/movies/:id", app.updateMovieHandler)
 
-	return router
+	return r
 }
