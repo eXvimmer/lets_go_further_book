@@ -11,7 +11,6 @@ import (
 	"time"
 
 	"github.com/exvimmer/lets_go_further/greenlight/internal/data"
-	"github.com/joho/godotenv"
 	_ "github.com/lib/pq"
 )
 
@@ -35,20 +34,6 @@ type application struct {
 }
 
 func main() {
-	/* NOTE:
-	 * you should create a .env file at the root of your project and add
-	 * POSTGRES_USERNAME, POSTGRES_PASSWORD, POSTGRES_DATABASE, POSTGRES_HOST  to
-	 * it.
-	 */
-	err := godotenv.Load()
-	if err != nil {
-		log.Fatal("Error loading .env file")
-	}
-	dbUsername := os.Getenv("POSTGRES_USERNAME")
-	dbPassword := os.Getenv("POSTGRES_PASSWORD")
-	dbHost := os.Getenv("POSTGRES_HOST")
-	dbName := os.Getenv("POSTGRES_DATABASE")
-
 	var cfg config
 
 	flag.IntVar(&cfg.port, "port", 4000, "API server port")
@@ -57,7 +42,9 @@ func main() {
 	flag.StringVar(
 		&cfg.db.dsn,
 		"db-dsn",
-		"postgres://"+dbUsername+":"+dbPassword+"@"+dbHost+"/"+dbName,
+		// TODO: create an environment variable, GREENLIGHT_DB_DSN, like
+		// postgres://username:password@host/dbname
+		os.Getenv("GREENLIGHT_DB_DSN"),
 		"PostgreSQL DSN",
 	)
 	flag.IntVar(&cfg.db.maxOpenConns, "db-max-open-conns", 25,
