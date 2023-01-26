@@ -169,6 +169,7 @@ func (app *application) listMoviesHandler(w http.ResponseWriter, r *http.Request
 		Genres []string
 		data.Filters
 	}
+
 	v := validator.New()
 	qs := r.URL.Query()
 	input.Title = app.readString(qs, "title", "")
@@ -176,9 +177,13 @@ func (app *application) listMoviesHandler(w http.ResponseWriter, r *http.Request
 	input.Filters.Page = app.readInt(qs, "page", 1, v)
 	input.Filters.PageSize = app.readInt(qs, "page_size", 20, v)
 	input.Filters.Sort = app.readString(qs, "sort", "id")
-	if !v.Valid() {
+	input.Filters.SortSafelist = []string{"id", "title", "year", "runtime", "-id",
+		"-title", "-year", "-runtime"}
+
+	if data.ValidateFilters(v, input.Filters); !v.Valid() {
 		app.failedValidationResponse(w, r, v.Errors)
 		return
 	}
+
 	fmt.Fprintf(w, "%+v", input)
 }
