@@ -18,5 +18,5 @@ func (app *application) routes() http.Handler {
 	r.HandlerFunc(http.MethodPatch, "/v1/movies/:id", app.updateMovieHandler)
 	r.HandlerFunc(http.MethodDelete, "/v1/movies/:id", app.deleteMovieHandler)
 
-	return app.recoverPanic(r)
+	return app.recoverPanic(app.rateLimit(r))
 }
