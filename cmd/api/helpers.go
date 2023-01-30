@@ -25,8 +25,7 @@ func (app *application) readIDParam(r *http.Request) (int64, error) {
 	return id, nil
 }
 
-func (app *application) writeJSON(w http.ResponseWriter, status int,
-	data envelope, headers http.Header) error {
+func (app *application) writeJSON(w http.ResponseWriter, status int, data envelope, headers http.Header) error {
 	// js, err := json.MarshalIndent(data, "", "\t")
 	js, err := json.Marshal(data)
 	if err != nil {
@@ -42,8 +41,7 @@ func (app *application) writeJSON(w http.ResponseWriter, status int,
 	return nil
 }
 
-func (app *application) readJSON(w http.ResponseWriter, r *http.Request,
-	dst any) error {
+func (app *application) readJSON(w http.ResponseWriter, r *http.Request, dst any) error {
 	maxByte := 1_048_576 // 1MB
 	r.Body = http.MaxBytesReader(w, r.Body, int64(maxByte))
 	dec := json.NewDecoder(r.Body)
@@ -55,19 +53,16 @@ func (app *application) readJSON(w http.ResponseWriter, r *http.Request,
 		var invalidUnmarshalError *json.InvalidUnmarshalError
 		switch {
 		case errors.As(err, &syntaxError):
-			return fmt.Errorf("body contains badly-formed JSON (at character %d)",
-				syntaxError.Offset)
+			return fmt.Errorf("body contains badly-formed JSON (at character %d)", syntaxError.Offset)
 
 		case errors.Is(err, io.ErrUnexpectedEOF):
 			return errors.New("body contains badly-formed JSON")
 
 		case errors.As(err, &unmarshalTypeError):
 			if unmarshalTypeError.Field != "" {
-				return fmt.Errorf("body contains incorrect JSON type for field %q",
-					unmarshalTypeError.Field)
+				return fmt.Errorf("body contains incorrect JSON type for field %q", unmarshalTypeError.Field)
 			}
-			return fmt.Errorf("body contains incorrect JSON type (at character %q)",
-				unmarshalTypeError.Offset)
+			return fmt.Errorf("body contains incorrect JSON type (at character %q)", unmarshalTypeError.Offset)
 
 		case errors.Is(err, io.EOF):
 			return errors.New("body must not be empty")
@@ -101,8 +96,7 @@ func (app *application) readString(qs url.Values, key, defaultValue string) stri
 	return s
 }
 
-func (app *application) readCSV(qs url.Values, key string,
-	defaultValue []string) []string {
+func (app *application) readCSV(qs url.Values, key string, defaultValue []string) []string {
 	csv := qs.Get(key)
 	if csv == "" {
 		return defaultValue
@@ -110,8 +104,7 @@ func (app *application) readCSV(qs url.Values, key string,
 	return strings.Split(csv, ",")
 }
 
-func (app *application) readInt(qs url.Values, key string, defaultValue int,
-	v *validator.Validator) int {
+func (app *application) readInt(qs url.Values, key string, defaultValue int, v *validator.Validator) int {
 	s := qs.Get(key)
 	if s == "" {
 		return defaultValue
