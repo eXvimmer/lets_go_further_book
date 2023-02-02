@@ -23,6 +23,9 @@ import (
 
 const version = "1.0.0" // TODO: generate automatically at build time
 
+// holds the executable binary build time
+var buildTime string
+
 type config struct {
 	port int
 	env  string
@@ -112,6 +115,7 @@ func main() {
 
 	if *displayVersion {
 		fmt.Printf("Version:\t%s\n", version)
+		fmt.Printf("Build time:\t%s\n", buildTime)
 		os.Exit(0)
 	}
 
