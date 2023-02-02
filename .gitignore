@@ -22,6 +22,7 @@ bin/
 go.work
 
 .env
+.envrc
 greenlight
 tls/
 Session.vim
