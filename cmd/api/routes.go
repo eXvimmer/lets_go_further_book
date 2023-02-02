@@ -22,7 +22,9 @@ func (app *application) routes() http.Handler {
 		app.requirePermission("movies:write", app.deleteMovieHandler))
 	r.HandlerFunc(http.MethodPost, "/v1/users", app.registerUserHandler)
 	r.HandlerFunc(http.MethodPut, "/v1/users/activated", app.activateUserHandler)
+	r.HandlerFunc(http.MethodPut, "/v1/users/password", app.updateUserPasswordHandler)
 	r.HandlerFunc(http.MethodPost, "/v1/tokens/authentication", app.createAuthenticationTokenHandler)
+	r.HandlerFunc(http.MethodPost, "/v1/tokens/password-reset", app.createPasswordResetTokenHandler)
 	r.Handler(http.MethodGet, "/debug/vars", expvar.Handler())
 
 	return app.metrics(app.recoverPanic(app.enableCORS(app.rateLimit(app.authenticate(r)))))
