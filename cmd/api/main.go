@@ -21,10 +21,11 @@ import (
 	_ "github.com/lib/pq"
 )
 
-const version = "1.0.0" // TODO: generate automatically at build time
-
-// holds the executable binary build time
-var buildTime string
+var (
+	version = "1.0.0"
+	// holds the executable binary build time
+	buildTime string
+)
 
 type config struct {
 	port int
