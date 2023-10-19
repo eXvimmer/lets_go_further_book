@@ -17,12 +17,13 @@ import (
 	"github.com/exvimmer/lets_go_further/greenlight/internal/data"
 	"github.com/exvimmer/lets_go_further/greenlight/internal/jsonlog"
 	"github.com/exvimmer/lets_go_further/greenlight/internal/mailer"
+	"github.com/exvimmer/lets_go_further/greenlight/internal/vcs"
 	"github.com/joho/godotenv"
 	_ "github.com/lib/pq"
 )
 
 var (
-	version = "1.0.0"
+	version = vcs.Version()
 	// holds the executable binary build time
 	buildTime string
 )
