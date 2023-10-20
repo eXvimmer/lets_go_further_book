@@ -11,8 +11,8 @@ import (
 	"time"
 
 	"github.com/exvimmer/lets_go_further/greenlight/internal/data"
-	"github.com/exvimmer/lets_go_further/greenlight/internal/validator"
 	"github.com/felixge/httpsnoop"
+	"github.com/pascaldekloe/jwt"
 	"github.com/tomasen/realip"
 	"golang.org/x/time/rate"
 )
@@ -108,12 +108,21 @@ func (app *application) authenticate(next http.Handler) http.Handler {
 			return
 		}
 		token := headerParts[1]
-		v := validator.New()
-		if data.ValidateTokenPlaintext(v, token); !v.Valid() {
+		claims, err := jwt.HMACCheck([]byte(token), []byte(app.config.jwt.secret))
+		if err != nil ||
+			!claims.Valid(time.Now()) ||
+			claims.Issuer != "greenlight.exvimmer.net" ||
+			!claims.AcceptAudience("greenlight.exvimmer.net") {
 			app.invalidAuthenticationTokenResponse(w, r)
 			return
 		}
-		user, err := app.models.Users.GetForToken(data.ScopeAuthentication, token)
+		userID, err := strconv.ParseInt(claims.Subject, 10, 64)
+		if err != nil {
+			app.serverErrorResponse(w, r, err)
+			return
+		}
+
+		user, err := app.models.Users.Get(userID)
 		if err != nil {
 			switch {
 			case errors.Is(err, data.ErrRecordNotFound):

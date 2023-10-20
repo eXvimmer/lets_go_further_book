@@ -52,6 +52,9 @@ type config struct {
 	cors struct {
 		trustedOrigins []string
 	}
+	jwt struct {
+		secret string
+	}
 }
 
 type application struct {
@@ -66,7 +69,7 @@ func main() {
 	// TODO: create a .env file with SMTP info at the root of the project
 	err := godotenv.Load()
 	if err != nil {
-		log.Fatal("error loading the .env file")
+		log.Println("error loading the .env file.\ncontinuing with defaults")
 	}
 
 	smtpHost := os.Getenv("SMTP_HOST")
@@ -77,6 +80,7 @@ func main() {
 	}
 	smtpUsername := os.Getenv("SMTP_USERNAME")
 	smtpPassword := os.Getenv("SMTP_PASSWORD")
+	jwtSecret := os.Getenv("JWT_SECRET")
 	smtpSender := "Greenlight <no-reply@greenlight.exvimmer.net>"
 
 	var cfg config
@@ -111,6 +115,7 @@ func main() {
 		return nil
 	})
 
+	flag.StringVar(&cfg.jwt.secret, "jwt-secret", jwtSecret, "JWT secret")
 	displayVersion := flag.Bool("version", false, "Display version and exit")
 
 	flag.Parse()
